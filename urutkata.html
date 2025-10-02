@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Urutkan Kata - Drag</title>
+  <style>
+    body{
+      font-family:Arial,sans-serif;
+      background:#f8fafc;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      margin:0;
+    }
+    .container{
+      background:#fff;
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.06);
+      width:min(550px,90%);
+    }
+    h1{text-align:center;margin-top:0;}
+    .word-bank{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:15px;
+      min-height:50px;
+      border:1px dashed #ccc;
+      padding:8px;
+      border-radius:6px;
+    }
+    .word{
+      background:#2b6cb0;
+      color:#fff;
+      padding:6px 10px;
+      border-radius:6px;
+      cursor:grab;
+      user-select:none;
+    }
+    .dropzone{
+      border:2px dashed #ccc;
+      border-radius:6px;
+      min-height:60px;
+      padding:8px;
+      text-align:left;
+      margin-bottom:10px;
+      background:#f1f5f9;
+    }
+    .answer-word{
+      display:inline-block;
+      margin-right:4px;
+    }
+    .buttons{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      margin-top:10px;
+    }
+    button{
+      padding:8px 14px;
+      background:#2b6cb0;
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+    }
+    button:hover{background:#1a4365;}
+    .feedback{
+      font-weight:bold;
+      text-align:center;
+      margin-top:8px;
+    }
+    .success{color:green;}
+    .error{color:red;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Urutkan Kata</h1>
+    <p>Drag kata dari kotak bawah ke area jawaban, urutkan menjadi kalimat yang benar:</p>
+    <div class="word-bank" id="wordBank"></div>
+
+    <div id="dropzone" class="dropzone">
+      <p>Tarik kata ke sini...</p>
+    </div>
+
+    <div class="buttons">
+      <button id="checkBtn">Hasil</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <script>
+    const correctAnswer = "I-am-going-to-the-market";
+    const originalWords = ["I","am","going","to","the","market"];
+
+    const wordBank = document.getElementById("wordBank");
+    const dropzone = document.getElementById("dropzone");
+    const feedback = document.getElementById("feedback");
+    const checkBtn = document.getElementById("checkBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    // fungsi acak array
+    function shuffle(array){
+      let arr = array.slice();
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    // render kata
+    function renderWords(){
+      wordBank.innerHTML="";
+      dropzone.innerHTML="<p>Tarik kata ke sini...</p>";
+      feedback.textContent="";
+      const shuffled=shuffle(originalWords);
+      shuffled.forEach(word=>{
+        const span=document.createElement("div");
+        span.className="word";
+        span.textContent=word;
+        span.draggable=true;
+        span.addEventListener("dragstart",(e)=>{
+          e.dataTransfer.setData("text/plain",word);
+          e.dataTransfer.effectAllowed="move";
+          // simpan referensi element untuk dihapus
+          e.target.classList.add("dragging");
+        });
+        span.addEventListener("dragend",(e)=>{
+          e.target.classList.remove("dragging");
+        });
+        wordBank.appendChild(span);
+      });
+    }
+
+    // dropzone events
+    dropzone.addEventListener("dragover",(e)=>{
+      e.preventDefault();
+    });
+
+    dropzone.addEventListener("drop",(e)=>{
+      e.preventDefault();
+      const word=e.dataTransfer.getData("text/plain");
+      if(word){
+        // tambahkan kata ke dropzone
+        if(dropzone.querySelector("p")) dropzone.innerHTML=""; // hapus placeholder
+        const span=document.createElement("span");
+        span.textContent=word;
+        span.className="answer-word";
+        dropzone.appendChild(span);
+
+        // hapus kata dari wordBank
+        const dragging=document.querySelector(".word.dragging");
+        if(dragging) dragging.remove();
+      }
+    });
+
+    // cek jawaban
+    checkBtn.addEventListener("click",()=>{
+      const words=[...dropzone.querySelectorAll(".answer-word")].map(s=>s.textContent);
+      const userAnswer=words.join("-");
+      if(userAnswer===correctAnswer){
+        feedback.textContent="Hebat. Jawaban anda benar";
+        feedback.className="feedback success";
+      }else{
+        feedback.textContent="Maaf jawaban anda salah. Ulangi lagi";
+        feedback.className="feedback error";
+      }
+    });
+
+    // reset
+    resetBtn.addEventListener("click",renderWords);
+
+    // pertama kali
+    renderWords();
+  </script>
+</body>
+</html>
