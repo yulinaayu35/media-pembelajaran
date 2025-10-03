@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flipbook dengan Back Cover</title>
+<style>
+  body {
+    margin: 0;
+    background: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .book {
+    width: calc(100% - 3cm); /* sisakan 1.5 cm kiri & kanan */
+    max-width: 900px;
+    height: 500px;
+    position: relative;
+    perspective: 2000px;
+  }
+  .page {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-origin: left center;
+    transition: transform 1s ease-in-out;
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    background: #F5F5F5;
+    overflow: hidden;
+  }
+  .page-content {
+    padding: 40px;
+    font-size: 20px;
+  }
+  /* cover depan gambar */
+  .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* back cover biru muda */
+  .back-cover {
+    background: lightblue;
+  }
+</style>
+</head>
+<body>
+<div class="book" id="book">
+  <!-- Cover depan -->
+  <div class="page cover" data-page="0">
+    <img src="https://mtsdarulfalahsirahan-sketch.github.io/multimedia/pencernaan.png" alt="Cover Buku">
+  </div>
+  <!-- Halaman isi -->
+  <div class="page" data-page="1">
+    <div class="page-content">
+      <h2>1. Mulut</h2>
+<img src="https://mtsdarulfalahsirahan-sketch.github.io/multimedia/mulut.jpg">
+ <p>Mulut merupakan organ pertama dalam sistem pencernaan yang berfungsi sebagai tempat masuknya makanan. Di dalam mulut terdapat gigi yang bertugas memotong, mengoyak, dan menghaluskan makanan agar lebih mudah dicerna. Lidah membantu mengatur posisi makanan serta mengecap rasa. Kelenjar ludah menghasilkan air liur yang mengandung enzim amilase untuk memulai proses pemecahan karbohidrat menjadi molekul yang lebih sederhana sebelum makanan ditelan.</p>
+    </div>
+  </div>
+
+  <div class="page" data-page="2">
+    <div class="page-content">
+      <h2>2. Kerongkongan</h2>
+     <img src="https://mtsdarulfalahsirahan-sketch.github.io/multimedia/kerongkongan.jpg">
+      <p>Kerongkongan adalah saluran pencernaan berbentuk tabung yang menghubungkan rongga mulut dengan lambung. Organ ini berfungsi mengalirkan makanan dan minuman yang telah dikunyah melalui proses peristaltik, yaitu gerakan otot yang mendorong bolus menuju lambung. Kerongkongan juga dilapisi lendir untuk mempermudah perjalanan makanan. Meskipun tidak menghasilkan enzim pencernaan, kerongkongan berperan penting sebagai jalur awal sebelum proses pencernaan berlanjut di lambung.</p>
+    </div>
+  </div>
+
+  <div class="page" data-page="3">
+    <div class="page-content">
+      <h2>3. Lambung</h2>
+<img src="https://yulinaayu35.github.io/media-pembelajaran/gambar1.jpg">
+      <p>Lambung merupakan organ pencernaan berbentuk kantung yang terletak di bagian kiri atas perut, berfungsi menampung dan mengolah makanan setelah melewati kerongkongan. Di dalam lambung, makanan diaduk oleh kontraksi otot serta bercampur dengan getah lambung yang mengandung asam klorida dan enzim pepsin untuk memecah protein. Proses ini menghasilkan bubur makanan (kimus) yang kemudian diteruskan ke usus halus untuk pencernaan lebih lanjut.</p>
+    </div>
+  </div>
+
+<!-- Halaman 4 -->
+<div class="page" data-page="4">
+  <div class="page-content">
+    <h2>4. Usus Halus</h2>
+<img src="https://yulinaayu35.github.io/media-pembelajaran/gambar2.jpg">
+    <p>Usus halus merupakan bagian terpanjang dari saluran pencernaan yang terletak setelah lambung dan sebelum usus besar. Organ ini terdiri dari duodenum, jejunum, dan ileum yang bekerja sama untuk mencerna dan menyerap nutrisi. Di usus halus, makanan bercampur dengan enzim dari pankreas dan empedu sehingga zat gizi seperti protein, karbohidrat, dan lemak dipecah serta diserap ke dalam aliran darah untuk kebutuhan tubuh.</p>
+  </div>
+</div>
+
+<div class="page" data-page="5">
+    <div class="page-content">
+      <h2>5. Usus Besar</h2>
+      <p>Usus besar merupakan bagian akhir saluran pencernaan yang terletak setelah usus halus dan berfungsi menyerap air serta mineral dari sisa makanan yang tidak tercerna. Organ ini terdiri atas sekum, kolon, dan rektum. Di usus besar, bakteri baik membantu proses pembusukan sisa makanan sehingga terbentuk feses. Usus besar juga berperan dalam penyimpanan sementara feses sebelum dikeluarkan melalui anus.</p>
+    </div>
+  </div>
+
+<div class="page" data-page="6">
+    <div class="page-content">
+      <h2>LEMBAR DISKUSI</h2>
+      <p>Jelaskan penyakit yang bisa menyerang sistem pencernaan dan bagaimana penanganan!</p>
+<video width="320" height="240" controls>
+  <source src="https://yulinaayu35.github.io/media-pembelajaran/s%20pencernaan.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+    </div>
+  </div>
+
+
+  <!-- Back cover -->
+  <div class="page back-cover" data-page="4"></div>
+</div>
+
+<script>
+  const pages = document.querySelectorAll(".page");
+  let zIndexCounter = 1;
+
+  pages.forEach((page, index) => {
+    page.style.zIndex = pages.length - index;
+    page.addEventListener("click", () => {
+      if (!page.classList.contains("flipped")) {
+        page.style.transform = "rotateY(-180deg)";
+        page.classList.add("flipped");
+        page.style.zIndex = ++zIndexCounter;
+      } else {
+        page.style.transform = "rotateY(0deg)";
+        page.classList.remove("flipped");
+        page.style.zIndex = ++zIndexCounter;
+      }
+    });
+  });
+</script>
+</body>
+</html>
